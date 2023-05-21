@@ -2,11 +2,12 @@
 #define OBJECT_H
 
 #include <vector>
+#include <tuple>
 #include <glm/glm.hpp>
 #include "mesh.h"
 #include "material.h"
 
-
+/*
 class t_face_indices {
 public:
     glm::ivec3 front[3];
@@ -15,21 +16,18 @@ public:
     t_face_indices(glm::ivec3 front[3]);
     ~t_face_indices();
 };
-
+*/
 
 class t_object {
 public:
-    t_object();
+    t_object(std::string name);
+    void add_mesh_material(std::tuple<t_mesh *, t_material *> mesh_material);
+    std::vector<std::tuple<t_mesh *, t_material *>> *get_mesh_material();
+    std::string get_name();
 
 private:
     std::string name;
-    std::vector<glm::vec3> v_coordinates;
-    std::vector<glm::vec3> v_normals;
-    std::vector<glm::vec2> v_uvs;
-    std::vector<t_face_indices> v_face_indices;
-
-    std::vector<t_mesh *> v_meshes;
-    std::vector<t_material *> v_materials;
+    std::vector<std::tuple<t_mesh *, t_material *>> v_mesh_material;
 };
 
 #endif // OBJECT_H

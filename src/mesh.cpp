@@ -3,7 +3,17 @@
 #include <glm/gtx/string_cast.hpp>
 
 
-t_mesh::t_mesh(std::string path) {
+t_mesh::t_mesh(std::vector<t_vertex> v_vertices, std::vector<t_face> v_faces) {
+    this->v_vertices = v_vertices;
+    this->v_faces = v_faces;
+
+    for (unsigned int i = 0; i < v_faces.size(); i++) {
+        this->v_indices.push_back(v_faces[i].vertex_indices.x);
+        this->v_indices.push_back(v_faces[i].vertex_indices.y);
+        this->v_indices.push_back(v_faces[i].vertex_indices.z);
+    }
+
+    /*
     this->p_obj = new t_obj(path);
     this->name = p_obj->name;
     this->material = p_obj->material;
@@ -41,48 +51,30 @@ t_mesh::t_mesh(std::string path) {
         }
         this->v_faces.push_back(face);
     }
+    */
 }
 
 t_mesh::~t_mesh() {
 
 }
 
+/*
 void t_mesh::_copy_floats(float *arr1, float *arr2, size_t n) {
     for (int i = 0; i < n; i++) {
         arr1[i] = arr2[i];
     }
 }
+*/
 
-void t_mesh::print() {
-    std::cout << "mesh name: " << this->name << std::endl;
-    std::cout << "material: " << this->material << std::endl;
-    std::cout << "v_vertices_size: " << this->v_vertices.size() << std::endl;
-    std::cout << "v_faces_size: " << this->v_faces.size() << std::endl;
-    std::cout << "v_indices_size: " << this->v_indices.size() << std::endl;
+std::vector<t_vertex> *t_mesh::get_vertices() {
+    return &this->v_vertices;
+}
 
-    std::cout << "v_vertices:" << std::endl;
-    for (unsigned int i = 0; i < this->v_vertices.size(); i++) {
-        std::cout << i << std::endl;
-        std::cout << glm::to_string(this->v_vertices[i].coordinates) << std::endl;
-        std::cout << glm::to_string(this->v_vertices[i].normal) << std::endl;
-        std::cout << glm::to_string(this->v_vertices[i].uv) << std::endl;
-    }
+std::vector<t_face> *t_mesh::get_faces() {
+    return &this->v_faces;
+}
 
-    std::cout << "v_indices:" << std::endl;
-    for (unsigned int i = 0; i < this->v_indices.size(); i++) {
-        std::cout << "index: " << this->v_indices[i] << std::endl;
-    }
-    
-    std::vector<t_vertex> *t_mesh::get_vertices() {
-        return &this->v_vertices;
-    }
-
-    std::vector<t_face> *t_mesh::get_faces() {
-        return &this->v_faces;
-    }
-
-    std::vector<unsigned int> *t_mesh::get_indices() {
-        return &this->v_indices;
-    }
+std::vector<unsigned int> *t_mesh::get_indices() {
+    return &this->v_indices;
 }
 

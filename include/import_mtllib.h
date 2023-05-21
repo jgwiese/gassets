@@ -1,0 +1,21 @@
+#ifndef IMPORT_MTLLIB_H
+#define IMPORT_MTLLIB_H
+
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include "material.h"
+
+
+class t_import_mtllib {
+public:
+    t_import_mtllib(std::string path);
+    ~t_import_mtllib();
+    t_material *get_material(std::string name);
+
+private:
+    std::unordered_map<std::string, t_material *> um_name_material;
+};
+
+#endif // IMPORT_MTLLIB_H
+
