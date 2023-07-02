@@ -8,7 +8,7 @@
 #include "face.h"
 #include "object.h"
 
-
+/*
 enum obj_line_type {
     NONE,
     NAME,
@@ -18,6 +18,7 @@ enum obj_line_type {
     MATERIAL,
     FACE
 };
+*/
 
 class t_import_obj {
 public:

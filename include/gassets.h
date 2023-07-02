@@ -1,5 +1,5 @@
-#ifndef CPPASSETS_H
-#define CPPASSETS_H
+#ifndef GASSETS_H
+#define GASSETS_H
 
 #include "face.h"
 #include "mesh.h"
@@ -9,5 +9,6 @@
 #include "object.h"
 #include "material.h"
 
-#endif // CPPASSETS_H
+#endif // GASSETS_H
+
 

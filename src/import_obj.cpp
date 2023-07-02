@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 #include <iterator>
+#include <algorithm>
 #include "../include/object.h"
 #include "../include/import_mtllib.h"
 
@@ -46,13 +47,16 @@ t_import_obj::t_import_obj(std::string path) {
     std::vector<glm::vec2> uvs;
     float x, y, z;
 
-    std::vector<t_vertex> vertices;
+    //std::vector<t_vertex> *vertices;
+    std::vector<t_vertex> v_vertices;
+    std::vector<unsigned int> v_vertex_indices;
     std::vector<t_face> faces;
 
     t_mesh *p_mesh = NULL;
     t_material *p_material = NULL;
     t_import_mtllib *p_import_mtllib = NULL;
     t_object *p_object = NULL;
+    bool flat_shading = false;
 
     while (std::getline(f, line)) {
         std::istringstream iss(line);
@@ -70,8 +74,7 @@ t_import_obj::t_import_obj(std::string path) {
                 if (p_object != NULL) {
                     if (faces.size() > 0) {
                         // create mesh
-                        p_mesh = new t_mesh(vertices, faces);
-                        vertices.clear();
+                        p_mesh = new t_mesh(v_vertices, faces, flat_shading);
                         faces.clear();
 
                         // add tuple to object
@@ -82,11 +85,8 @@ t_import_obj::t_import_obj(std::string path) {
                     p_material = NULL;
                 }
 
-                coordinates.clear();
-                normals.clear();
-                uvs.clear();
-
-                vertices.clear();
+                v_vertices.clear();
+                v_vertex_indices.clear();
                 faces.clear();
                 
                 // create new object
@@ -97,9 +97,18 @@ t_import_obj::t_import_obj(std::string path) {
                 
                 break;
             }
+            if (word.compare("s") == 0) {
+                iss >> name;
+                if ((name == "off") || (std::stoi(name) == 0)) {
+                    flat_shading = false;
+                }
+                else {
+                    flat_shading = true;
+                }
+            }
             if (word.compare("v") == 0) {
                 iss >> x >> y >> z;
-                coordinates.push_back(glm::vec3(x, y, z));
+                coordinates.push_back(glm::vec3(x, y, -z));
                 break;
             }
             if (word.compare("vn") == 0) {
@@ -115,13 +124,15 @@ t_import_obj::t_import_obj(std::string path) {
             if (word.compare("usemtl") == 0) {
                 if (faces.size() > 0) {
                     // create mesh
-                    p_mesh = new t_mesh(vertices, faces);
-                    vertices.clear();
+                    p_mesh = new t_mesh(v_vertices, faces, flat_shading);
                     faces.clear();
 
                     // add tuple to object
                     p_object->add_mesh_material(std::make_tuple(p_mesh, p_material));
                 }
+
+                v_vertices.clear();
+                v_vertex_indices.clear();
 
                 // set current material
                 iss >> name;
@@ -129,24 +140,33 @@ t_import_obj::t_import_obj(std::string path) {
                 break;
             }
             if (word.compare("f") == 0) {
+                std::vector<unsigned int> indices_clean;
                 while (iss >> word) {
                     int last_pos = 0;
                     int current_pos = 0;
                     std::vector<std::string> vertex_indices_string = split(word, '/');
 
-                    t_vertex vertex(
-                        coordinates[std::stoi(vertex_indices_string[0])],
-                        normals[std::stoi(vertex_indices_string[1])],
-                        uvs[std::stoi(vertex_indices_string[2])]
-                    );
-                    vertices.push_back(vertex);
+                    unsigned int coordinates_i = std::stoi(vertex_indices_string[0]) - 1;
+                    unsigned int normal_i = std::stoi(vertex_indices_string[2]) - 1;
+                    unsigned int uv_i = std::stoi(vertex_indices_string[1]) - 1;
+
+                    std::vector<unsigned int>::iterator it = std::find(v_vertex_indices.begin(), v_vertex_indices.end(), coordinates_i);
+                    unsigned int v_index = it - v_vertex_indices.begin();
+                    if (it == v_vertex_indices.end()) {
+                        v_vertices.push_back(t_vertex(
+                            coordinates.at(coordinates_i),
+                            normals.at(normal_i),
+                            uvs.at(uv_i)
+                        ));
+                        v_vertex_indices.push_back(coordinates_i);
+                    }
+                    indices_clean.push_back(v_index);
                 }
                 // create face
-                int size = vertices.size();
                 t_vertex *v1, *v2, *v3;
-                v1 = &vertices[size - 2];
-                v2 = &vertices[size - 1];
-                v3 = &vertices[size];
+                v1 = &v_vertices[indices_clean[0]];
+                v2 = &v_vertices[indices_clean[1]];
+                v3 = &v_vertices[indices_clean[2]];
 
                 // TODO: how to multiply/divide a glm vector simply?
                 glm::vec3 face_normal(
@@ -154,7 +174,7 @@ t_import_obj::t_import_obj(std::string path) {
                     (v1->normal.y + v2->normal.y + v3->normal.y) / 3.0,
                     (v1->normal.z + v2->normal.z + v3->normal.z) / 3.0
                 );
-                t_face face(glm::ivec3(size - 2, size - 1, size), face_normal);
+                t_face face(glm::ivec3(indices_clean[0], indices_clean[1], indices_clean[2]), face_normal);
                 faces.push_back(face);
                 break;
             }
@@ -165,8 +185,10 @@ t_import_obj::t_import_obj(std::string path) {
     if (p_object != NULL) {
         if (faces.size() > 0) {
             // create mesh
-            p_mesh = new t_mesh(vertices, faces);
-            vertices.clear();
+
+            p_mesh = new t_mesh(v_vertices, faces, flat_shading);
+            v_vertices.clear();
+            v_vertex_indices.clear();
             faces.clear();
 
             // add tuple to object
@@ -185,44 +207,3 @@ t_import_obj::~t_import_obj() {
 std::vector<t_object *> *t_import_obj::get_objects() {
     return &this->v_objects;
 }
-
-/*
-void *t_import_obj::_parse_line(char *line, enum obj_line_type *type) {
-    char *line_copy = line;
-    char *token = NULL;
-    void *buffer = NULL;
-    if (line_copy != NULL) {
-        token = strsep(&line_copy, " \n");
-        if (strcmp(token, "o") == 0) {
-            *type = NAME;
-            token = strsep(&line_copy, " \n");
-            buffer = calloc(strlen(token), sizeof(char));
-            strcpy((char *) buffer, token);
-        }
-        else if (strcmp(token, "v") == 0) {
-            *type = COORDINATES;
-            buffer = _parse_floats(line_copy, 3);
-        }
-        else if (strcmp(token, "vn") == 0) {
-            *type = NORMAL;
-            buffer = _parse_floats(line_copy, 3);
-        }
-        else if (strcmp(token, "vt") == 0) {
-            *type = UV;
-            buffer = _parse_floats(line_copy, 2);
-        }
-        else if (strcmp(token, "mtllib") == 0) {
-            *type = MATERIAL;
-            token = strsep(&line_copy, " \n");
-            buffer = calloc(strlen(token) + 1, sizeof(char));
-            strcpy((char *) buffer, token);
-        }
-        else if (strcmp(token, "f") == 0) {
-            *type = FACE;
-            buffer = _parse_ints(line_copy, 9);
-        }
-    }
-    return buffer;
-}
-*/
-

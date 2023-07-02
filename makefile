@@ -1,4 +1,4 @@
-NAME=cppassets
+NAME=gassets
 TARGET := lib$(NAME).a
 BUILDDIR := build
 SOURCEDIR := src
