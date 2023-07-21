@@ -21,13 +21,13 @@ public:
 class t_object {
 public:
     t_object(std::string name);
-    void add_mesh_material(std::tuple<t_mesh *, t_material *> mesh_material);
-    std::vector<std::tuple<t_mesh *, t_material *>> *get_mesh_material();
+    void add_mesh_material(std::tuple<t_mesh *, assets::t_material *> mesh_material);
+    std::vector<std::tuple<t_mesh *, assets::t_material *>> *get_mesh_material();
     std::string get_name();
 
 private:
     std::string name;
-    std::vector<std::tuple<t_mesh *, t_material *>> v_mesh_material;
+    std::vector<std::tuple<t_mesh *, assets::t_material *>> v_mesh_material;
 };
 
 #endif // OBJECT_H

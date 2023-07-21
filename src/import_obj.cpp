@@ -53,7 +53,7 @@ t_import_obj::t_import_obj(std::string path) {
     std::vector<t_face> faces;
 
     t_mesh *p_mesh = NULL;
-    t_material *p_material = NULL;
+    assets::t_material *p_material = NULL;
     t_import_mtllib *p_import_mtllib = NULL;
     t_object *p_object = NULL;
     bool flat_shading = false;

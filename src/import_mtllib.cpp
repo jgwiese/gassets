@@ -3,12 +3,23 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image/stb_image.h>
 
 
 t_import_mtllib::t_import_mtllib(std::string path) {
     std::cout << "import mtllib" << std::endl;
+    stbi_set_flip_vertically_on_load(true);
+    std::string base_path;
+    size_t last = 0;
+    size_t next = 0;
+    while ((next = path.find('/', last)) != std::string::npos) {
+        base_path = path.substr(0, next);
+        last = next + 1;
+    }
+
     std::ifstream f(path); // TODO: add error handling.
-    std::string line, word;
+    std::string line, word, fname;
     float x, y, z;
     reset_values();
 
@@ -17,7 +28,7 @@ t_import_mtllib::t_import_mtllib(std::string path) {
         while (iss >> word) {
             if (word.compare("newmtl") == 0) {
                 if (name != "") {
-                    t_material *p_material = new t_material(name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor);
+                    assets::t_material *p_material = new assets::t_material(name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor, map_kd);
                     this->um_name_material.insert(std::make_pair(name, p_material));
                     std::cout << "new material added" << std::endl;
                     p_material->print();
@@ -29,6 +40,15 @@ t_import_mtllib::t_import_mtllib(std::string path) {
             if (word.compare("Kd") == 0) {
                 iss >> x >> y >> z;
                 this->kd = {x, y, z};
+                break;
+            }
+            if (word.compare("map_Kd") == 0) {
+                iss >> fname;
+                std::string fpath = base_path + '/' + fname;
+                int width, height, channels;
+                float *data = stbi_loadf(fpath.c_str(), &width, &height, &channels, 0);
+                std::cout << "width, height, channels: " << width << ", " << height << ", " << channels << std::endl;
+                this->map_kd = new t_image(data, width, height, channels);
                 break;
             }
             if (word.compare("Ks") == 0) {
@@ -94,7 +114,7 @@ t_import_mtllib::t_import_mtllib(std::string path) {
         }
     }
     if (name != "") {
-        t_material *p_material = new t_material(name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor);
+        assets::t_material *p_material = new assets::t_material(name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor, map_kd);
         this->um_name_material.insert(std::make_pair(name, p_material));
         std::cout << "new material added" << std::endl;
         p_material->print();
@@ -110,6 +130,7 @@ t_import_mtllib::~t_import_mtllib() {
 void t_import_mtllib::reset_values() {
     this->name = "";
     this->kd = {0.0, 0.0, 0.0};
+    this->map_kd = NULL;
     this->ks = {0.0, 0.0, 0.0};
     this->ke = {0.0, 0.0, 0.0};
     this->d = 0.0;
@@ -123,7 +144,7 @@ void t_import_mtllib::reset_values() {
     this->anisor = 0.0;
 }
 
-t_material *t_import_mtllib::get_material(std::string name) {
+assets::t_material *t_import_mtllib::get_material(std::string name) {
     return this->um_name_material.at(name);
 }
 

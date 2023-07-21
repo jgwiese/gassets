@@ -8,6 +8,7 @@
 #include "vertex.h"
 #include "object.h"
 #include "material.h"
+#include "image.h"
 
 #endif // GASSETS_H
 
