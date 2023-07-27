@@ -1,6 +1,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include <string>
+
 
 class t_image {
 public:
@@ -12,6 +14,7 @@ public:
     unsigned int get_height();
     unsigned int get_channels();
     float *get_data();
+    static t_image *from_file(std::string path);
 
 private:
     unsigned int width, height, channels;

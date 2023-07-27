@@ -1,5 +1,9 @@
 #include "../include/image.h"
 #include <iostream>
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image/stb_image.h>
+#endif // STB_IMAGE_IMPLEMENTATION
 
 
 t_image::t_image(float *data, unsigned int width, unsigned int height, unsigned int channels) {
@@ -41,4 +45,15 @@ unsigned int t_image::get_channels() {
 
 float *t_image::get_data() {
     return this->data;
+}
+
+t_image *t_image::from_file(std::string path) {
+    //stbi_set_flip_vertically_on_load(true);
+    int width, height, channels;
+    float *data = stbi_loadf(path.c_str(), &width, &height, &channels, 0);
+    if (data == NULL) {
+        std::cout << "error loading the image" << std::endl;
+    }
+    std::cout << path << ": width, height, channels: " << width << ", " << height << ", " << channels << std::endl;
+    return new t_image(data, width, height, channels);
 }

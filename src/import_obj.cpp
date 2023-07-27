@@ -1,4 +1,5 @@
 #include "../include/import_obj.h"
+#include <glm/common.hpp>
 #include <iostream>
 #include <glm/ext.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -49,7 +50,7 @@ t_import_obj::t_import_obj(std::string path) {
 
     //std::vector<t_vertex> *vertices;
     std::vector<t_vertex> v_vertices;
-    std::vector<unsigned int> v_vertex_indices;
+    std::vector<glm::ivec3> v_vertex_indices; // coordinates_i, normal_i, uv_i
     std::vector<t_face> faces;
 
     t_mesh *p_mesh = NULL;
@@ -108,7 +109,7 @@ t_import_obj::t_import_obj(std::string path) {
             }
             if (word.compare("v") == 0) {
                 iss >> x >> y >> z;
-                coordinates.push_back(glm::vec3(x, y, -z));
+                coordinates.push_back(glm::vec3(-x, y, -z));
                 break;
             }
             if (word.compare("vn") == 0) {
@@ -118,7 +119,8 @@ t_import_obj::t_import_obj(std::string path) {
             }
             if (word.compare("vt") == 0) {
                 iss >> x >> y;
-                uvs.push_back(glm::vec2(x, y));
+                glm::vec2 vt = glm::vec2(x, y);
+                uvs.push_back(vt);
                 break;
             }
             if (word.compare("usemtl") == 0) {
@@ -149,18 +151,13 @@ t_import_obj::t_import_obj(std::string path) {
                     unsigned int coordinates_i = std::stoi(vertex_indices_string[0]) - 1;
                     unsigned int normal_i = std::stoi(vertex_indices_string[2]) - 1;
                     unsigned int uv_i = std::stoi(vertex_indices_string[1]) - 1;
-
-                    std::vector<unsigned int>::iterator it = std::find(v_vertex_indices.begin(), v_vertex_indices.end(), coordinates_i);
-                    unsigned int v_index = it - v_vertex_indices.begin();
+                    std::vector<glm::ivec3>::iterator it = std::find_if(v_vertex_indices.begin(), v_vertex_indices.end(), [&coordinates_i, &uv_i, &normal_i] (const glm::ivec3 &v) {return (coordinates_i == v.x) && (uv_i == v.z) && (normal_i == v.y);});
+                    unsigned int index = std::distance(v_vertex_indices.begin(), it);
+                    indices_clean.push_back(index);
                     if (it == v_vertex_indices.end()) {
-                        v_vertices.push_back(t_vertex(
-                            coordinates.at(coordinates_i),
-                            normals.at(normal_i),
-                            uvs.at(uv_i)
-                        ));
-                        v_vertex_indices.push_back(coordinates_i);
+                        v_vertex_indices.push_back(glm::ivec3(coordinates_i, normal_i, uv_i));
+                        v_vertices.push_back(t_vertex(coordinates.at(coordinates_i),normals.at(normal_i), uvs.at(uv_i)));
                     }
-                    indices_clean.push_back(v_index);
                 }
                 // create face
                 t_vertex *v1, *v2, *v3;

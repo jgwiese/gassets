@@ -7,16 +7,6 @@
 #include "mesh.h"
 #include "material.h"
 
-/*
-class t_face_indices {
-public:
-    glm::ivec3 front[3];
-
-    t_face_indices();
-    t_face_indices(glm::ivec3 front[3]);
-    ~t_face_indices();
-};
-*/
 
 class t_object {
 public:

@@ -3,13 +3,11 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image/stb_image.h>
+#include "../include/image.h"
 
 
 t_import_mtllib::t_import_mtllib(std::string path) {
     std::cout << "import mtllib" << std::endl;
-    stbi_set_flip_vertically_on_load(true);
     std::string base_path;
     size_t last = 0;
     size_t next = 0;
@@ -45,10 +43,7 @@ t_import_mtllib::t_import_mtllib(std::string path) {
             if (word.compare("map_Kd") == 0) {
                 iss >> fname;
                 std::string fpath = base_path + '/' + fname;
-                int width, height, channels;
-                float *data = stbi_loadf(fpath.c_str(), &width, &height, &channels, 0);
-                std::cout << "width, height, channels: " << width << ", " << height << ", " << channels << std::endl;
-                this->map_kd = new t_image(data, width, height, channels);
+                this->map_kd = t_image::from_file(fpath);
                 break;
             }
             if (word.compare("Ks") == 0) {
