@@ -109,7 +109,7 @@ t_import_obj::t_import_obj(std::string path) {
             }
             if (word.compare("v") == 0) {
                 iss >> x >> y >> z;
-                coordinates.push_back(glm::vec3(-x, y, -z));
+                coordinates.push_back(glm::vec3(x, y, z));
                 break;
             }
             if (word.compare("vn") == 0) {
