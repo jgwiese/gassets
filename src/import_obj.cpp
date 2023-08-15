@@ -79,6 +79,9 @@ t_import_obj::t_import_obj(std::string path) {
                         faces.clear();
 
                         // add tuple to object
+                        if (p_material == NULL) {
+                            p_material = p_import_mtllib->get_material("default");
+                        }
                         p_object->add_mesh_material(std::make_tuple(p_mesh, p_material));
                     }
                     this->v_objects.push_back(p_object);
@@ -91,10 +94,12 @@ t_import_obj::t_import_obj(std::string path) {
                 faces.clear();
                 
                 // create new object
-                if (iss >> name) 
+                if (iss >> name) {
                     p_object = new t_object(name);
-                else
+                }
+                else {
                     p_object = new t_object("object_" + std::to_string(this->v_objects.size()));
+                }
                 
                 break;
             }
@@ -130,6 +135,9 @@ t_import_obj::t_import_obj(std::string path) {
                     faces.clear();
 
                     // add tuple to object
+                    if (p_material == NULL) {
+                        p_material = p_import_mtllib->get_material("default");
+                    }
                     p_object->add_mesh_material(std::make_tuple(p_mesh, p_material));
                 }
 
@@ -189,6 +197,9 @@ t_import_obj::t_import_obj(std::string path) {
             faces.clear();
 
             // add tuple to object
+            if (p_material == NULL) {
+                p_material = p_import_mtllib->get_material("default");
+            }
             p_object->add_mesh_material(std::make_tuple(p_mesh, p_material));
         }
         this->v_objects.push_back(p_object);

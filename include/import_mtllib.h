@@ -18,7 +18,7 @@ private:
     std::unordered_map<std::string, assets::t_material *> um_name_material;
     std::string name;
     glm::vec3 kd, ks, ke;
-    t_image *map_kd;
+    t_image *map_kd, *map_ks;
     float ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor;
 };
 

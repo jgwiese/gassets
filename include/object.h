@@ -14,6 +14,8 @@ public:
     void add_mesh_material(std::tuple<t_mesh *, assets::t_material *> mesh_material);
     std::vector<std::tuple<t_mesh *, assets::t_material *>> *get_mesh_material();
     std::string get_name();
+    glm::vec3 get_center();
+    void translate(glm::vec3);
 
 private:
     std::string name;

@@ -18,3 +18,31 @@ std::string t_object::get_name() {
     return this->name;
 }
 
+glm::vec3 t_object::get_center() {
+    glm::vec3 center = glm::vec3(0.0);
+    unsigned int counter = 0;
+    t_mesh *p_mesh;
+    assets::t_material *p_material;
+    for (unsigned int i = 0; i < this->v_mesh_material.size(); i++) {
+        std::tie(p_mesh, p_material) = this->v_mesh_material.at(i);
+        std::vector<t_vertex> *v_vertices = p_mesh->get_vertices();
+        for (unsigned int j = 0; j < v_vertices->size(); j++) {
+            center += v_vertices->at(j).coordinates;
+            counter++;
+        }
+    }
+    center /= counter;
+    return center;
+}
+
+void t_object::translate(glm::vec3 v) {
+    t_mesh *p_mesh;
+    assets::t_material *p_material;
+    for (unsigned int i = 0; i < this->v_mesh_material.size(); i++) {
+        std::tie(p_mesh, p_material) = this->v_mesh_material.at(i);
+        std::vector<t_vertex> *v_vertices = p_mesh->get_vertices();
+        for (unsigned int j = 0; j < v_vertices->size(); j++) {
+            v_vertices->at(j).coordinates -= v;
+        }
+    }
+}

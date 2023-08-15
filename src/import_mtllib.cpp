@@ -25,15 +25,15 @@ t_import_mtllib::t_import_mtllib(std::string path) {
         std::istringstream iss(line);
         while (iss >> word) {
             if (word.compare("newmtl") == 0) {
-                if (name != "") {
-                    assets::t_material *p_material = new assets::t_material(name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor, map_kd);
-                    this->um_name_material.insert(std::make_pair(name, p_material));
+                if (this->name != "") {
+                    assets::t_material *p_material = new assets::t_material(this->name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor, map_kd, map_ks);
+                    this->um_name_material.insert(std::make_pair(this->name, p_material));
                     std::cout << "new material added" << std::endl;
                     p_material->print();
                     std::cout << std::endl;
                     reset_values();
                 }
-                iss >> name;
+                iss >> this->name;
             }
             if (word.compare("Kd") == 0) {
                 iss >> x >> y >> z;
@@ -44,6 +44,12 @@ t_import_mtllib::t_import_mtllib(std::string path) {
                 iss >> fname;
                 std::string fpath = base_path + '/' + fname;
                 this->map_kd = t_image::from_file(fpath);
+                break;
+            }
+            if (word.compare("map_Ks") == 0) {
+                iss >> fname;
+                std::string fpath = base_path + '/' + fname;
+                this->map_ks = t_image::from_file(fpath);
                 break;
             }
             if (word.compare("Ks") == 0) {
@@ -108,9 +114,13 @@ t_import_mtllib::t_import_mtllib(std::string path) {
             }
         }
     }
-    if (name != "") {
-        assets::t_material *p_material = new assets::t_material(name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor, map_kd);
-        this->um_name_material.insert(std::make_pair(name, p_material));
+    //if (this->name != "") {
+    if (true) {
+        if (this->name == "") {
+            this->name = "default";
+        }
+        assets::t_material *p_material = new assets::t_material(this->name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor, map_kd, map_ks);
+        this->um_name_material.insert(std::make_pair(this->name, p_material));
         std::cout << "new material added" << std::endl;
         p_material->print();
         std::cout << std::endl;
@@ -126,6 +136,7 @@ void t_import_mtllib::reset_values() {
     this->name = "";
     this->kd = {0.0, 0.0, 0.0};
     this->map_kd = NULL;
+    this->map_ks = NULL;
     this->ks = {0.0, 0.0, 0.0};
     this->ke = {0.0, 0.0, 0.0};
     this->d = 0.0;

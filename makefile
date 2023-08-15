@@ -13,6 +13,9 @@ SOURCES := $(shell find $(SOURCEDIR) -name "*.cpp")
 OBJECTS := $(patsubst $(SOURCEDIR)/%, $(BUILDDIR)/%, $(SOURCES:.cpp=.o))
 HEADERS_INSTALL := $(shell find $(HEADERS_INSTALL_DIR) -name "*.h")
 
+# compiler flags
+COMPILER_FLAGS := -std=gnu++20
+
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
@@ -21,7 +24,7 @@ $(TARGET): $(OBJECTS)
 
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CC) -c $< -o $@
+	$(CC) $(COMPILER_FLAGS) -c $< -o $@
 
 install: $(TARGET)
 	install -d $(DESTDIR)$(PREFIX)/lib/
