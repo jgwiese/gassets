@@ -14,11 +14,13 @@ public:
     unsigned int get_height();
     unsigned int get_channels();
     float *get_data();
+    bool has_transparency();
     static t_image *from_file(std::string path);
 
 private:
     unsigned int width, height, channels;
-    float *data;
+    bool transparency;
+    float *data; // TODO why can't i place attributes after this float *data?
 };
 
 #endif // IMAGE_H

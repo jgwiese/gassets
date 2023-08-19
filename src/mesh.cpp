@@ -13,6 +13,7 @@ t_mesh::t_mesh(std::vector<t_vertex> v_vertices, std::vector<t_face> v_faces, bo
         this->v_indices.push_back(v_faces[i].vertex_indices.y);
         this->v_indices.push_back(v_faces[i].vertex_indices.z);
     }
+    this->calculate_center();
 }
 
 t_mesh::~t_mesh() {
@@ -35,3 +36,20 @@ std::vector<unsigned int> *t_mesh::get_indices() {
     return &this->v_indices;
 }
 
+void t_mesh::translate(glm::vec3 v) {
+    std::vector<t_vertex> *v_vertices = this->get_vertices();
+    for (unsigned int j = 0; j < v_vertices->size(); j++) {
+        v_vertices->at(j).coordinates += v;
+    }
+}
+
+glm::vec3 *t_mesh::get_center() {
+    return &this->center;
+}
+
+void t_mesh::calculate_center() {
+    for (unsigned int i = 0; i < this->get_vertices()->size(); i++) {
+        this->center += this->get_vertices()->at(i).coordinates;
+    }
+    this->center /= this->get_vertices()->size();
+}

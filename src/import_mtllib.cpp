@@ -15,8 +15,9 @@ t_import_mtllib::t_import_mtllib(std::string path) {
         base_path = path.substr(0, next);
         last = next + 1;
     }
-
+    std::cout << path << std::endl;
     std::ifstream f(path); // TODO: add error handling.
+    std::cout << "here3" << std::endl;
     std::string line, word, fname;
     float x, y, z;
     reset_values();
