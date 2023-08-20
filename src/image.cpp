@@ -18,11 +18,8 @@ t_image::t_image(float *data, unsigned int width, unsigned int height, unsigned 
     else {
         this->data = data;
         if (channels == 4) {
-            std::cout << "4 channels" << std::endl;
             for (unsigned int i = channels - 1; i < (width * height * channels); i+=channels) {
-                std::cout << "testing element " << i << std::endl;
                 if (this->data[i] < 1.0) {
-                    std::cout << "image has transparency" << std::endl;
                     this->transparency = true;
                 }
             }
@@ -71,6 +68,5 @@ t_image *t_image::from_file(std::string path) {
     if (data == NULL) {
         std::cout << "error loading the image" << std::endl;
     }
-    std::cout << path << ": width, height, channels: " << width << ", " << height << ", " << channels << std::endl;
     return new t_image(data, width, height, channels);
 }

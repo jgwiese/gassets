@@ -7,7 +7,6 @@
 
 
 t_import_mtllib::t_import_mtllib(std::string path) {
-    std::cout << "import mtllib" << std::endl;
     std::string base_path;
     size_t last = 0;
     size_t next = 0;
@@ -15,9 +14,7 @@ t_import_mtllib::t_import_mtllib(std::string path) {
         base_path = path.substr(0, next);
         last = next + 1;
     }
-    std::cout << path << std::endl;
     std::ifstream f(path); // TODO: add error handling.
-    std::cout << "here3" << std::endl;
     std::string line, word, fname;
     float x, y, z;
     reset_values();
@@ -29,9 +26,6 @@ t_import_mtllib::t_import_mtllib(std::string path) {
                 if (this->name != "") {
                     assets::t_material *p_material = new assets::t_material(this->name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor, map_kd, map_ks);
                     this->um_name_material.insert(std::make_pair(this->name, p_material));
-                    std::cout << "new material added" << std::endl;
-                    p_material->print();
-                    std::cout << std::endl;
                     reset_values();
                 }
                 iss >> this->name;
@@ -122,9 +116,6 @@ t_import_mtllib::t_import_mtllib(std::string path) {
         }
         assets::t_material *p_material = new assets::t_material(this->name, kd, ks, ke, ni, d, illum, pr, pm, ps, pc, pcr, aniso, anisor, map_kd, map_ks);
         this->um_name_material.insert(std::make_pair(this->name, p_material));
-        std::cout << "new material added" << std::endl;
-        p_material->print();
-        std::cout << std::endl;
         reset_values();
     }
 }

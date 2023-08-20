@@ -209,7 +209,7 @@ t_import_obj::t_import_obj(std::string path) {
 }
 
 t_import_obj::~t_import_obj() {
-    std::cout << "t_import_obj destructor" << std::endl;
+
 }
 
 std::vector<t_object *> *t_import_obj::get_objects() {

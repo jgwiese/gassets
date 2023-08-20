@@ -48,6 +48,7 @@ glm::vec3 *t_mesh::get_center() {
 }
 
 void t_mesh::calculate_center() {
+    this->center = glm::vec3(0.0);
     for (unsigned int i = 0; i < this->get_vertices()->size(); i++) {
         this->center += this->get_vertices()->at(i).coordinates;
     }

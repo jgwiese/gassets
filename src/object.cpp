@@ -25,11 +25,15 @@ glm::vec3 t_object::center() {
     assets::t_material *p_material;
     for (unsigned int i = 0; i < this->v_mesh_material.size(); i++) {
         std::tie(p_mesh, p_material) = this->v_mesh_material.at(i);
+        center += (*p_mesh->get_center()) * (p_mesh->get_vertices()->size() * float(1.0));
+        counter += p_mesh->get_vertices()->size();
+        /*
         std::vector<t_vertex> *v_vertices = p_mesh->get_vertices();
         for (unsigned int j = 0; j < v_vertices->size(); j++) {
             center += v_vertices->at(j).coordinates;
             counter++;
         }
+        */
     }
     center /= counter;
     translate(-center);
