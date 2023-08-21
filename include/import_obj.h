@@ -8,17 +8,6 @@
 #include "face.h"
 #include "object.h"
 
-/*
-enum obj_line_type {
-    NONE,
-    NAME,
-    COORDINATES,
-    NORMAL,
-    UV,
-    MATERIAL,
-    FACE
-};
-*/
 
 class t_import_obj {
 public:
@@ -31,4 +20,3 @@ private:
 };
 
 #endif // IMPORT_OBJ_H
-

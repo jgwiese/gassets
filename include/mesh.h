@@ -24,7 +24,7 @@ private:
     bool flat_shading;
     glm::vec3 center;
     std::vector<t_vertex> v_vertices;
-    std::vector<t_face> v_faces; // TODO: currently not in use
+    std::vector<t_face> v_faces;
     std::vector<unsigned int> v_indices;
     void calculate_center();
 };
